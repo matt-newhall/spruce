@@ -2,20 +2,18 @@ import React, { useState } from 'react'
 import { Winner, XorO } from './types'
 import Board from './components/Board'
 import { isBoardFull, isWinningMove } from './utils/boardUtils'
+import { VictoryBanner } from './components/VictoryBanner'
 
 
 export const Main = () => {
   const [board, setBoard] = useState<(XorO | undefined)[][]>(Array(3).fill(Array(3).fill(undefined)))
   const [player, setPlayer] = useState<XorO>('X')
+  const [winner, setWinner] = useState<Winner>()
 
   const resetBoard = () => {
     setBoard(Array(3).fill(Array(3).fill(undefined)))
     setPlayer('X')
-  }
-
-  const displayWinnerAndEnd = (winner: Winner) => {
-    alert(`The winner is.. ${winner}!\n\nPress OK to restart.`);
-    resetBoard()
+    setWinner(undefined)
   }
 
   const onClickSquare = async (rowIndex: number, colIndex: number) => {
@@ -35,9 +33,9 @@ export const Main = () => {
     const allTilesFilled = isBoardFull(updatedBoard)
 
     if (isWin) {
-      displayWinnerAndEnd(player)
+      setWinner(player)
     } else if (allTilesFilled) {
-      displayWinnerAndEnd('Draw')
+      setWinner('Draw')
     } else {
       // no endgame condition met, switch player and continue
       setPlayer(player === 'X' ? 'O' : 'X')
@@ -48,6 +46,7 @@ export const Main = () => {
     <div className='flex flex-col mt-10 items-center gap-10'>
       <div className='font-bold text-2xl'>Tic Tac Toe</div>
       <Board board={board} onClickSquare={onClickSquare} />
+      {winner && <VictoryBanner winner={winner} onReset={resetBoard} />}
     </div>
   )
 }
