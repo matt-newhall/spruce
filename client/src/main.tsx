@@ -3,17 +3,26 @@ import { Winner, XorO } from './types'
 import Board from './components/Board'
 import { isBoardFull, isWinningMove } from './utils/boardUtils'
 import { VictoryBanner } from './components/VictoryBanner'
+import { BoardResizer } from './components/BoardResizer'
 
 
 export const Main = () => {
-  const [board, setBoard] = useState<(XorO | undefined)[][]>(Array(3).fill(Array(3).fill(undefined)))
+  const [isGameStarted, setIsGameStarted] = useState(false)
+  const [boardSize, setBoardSize] = useState(3)
+  const [board, setBoard] = useState<(XorO | undefined)[][]>([])
   const [player, setPlayer] = useState<XorO>('X')
   const [winner, setWinner] = useState<Winner>()
 
-  const resetBoard = () => {
-    setBoard(Array(3).fill(Array(3).fill(undefined)))
+  const startGame = () => {
+    setIsGameStarted(true)
+    setBoard(Array(boardSize).fill(Array(boardSize).fill(undefined)))
     setPlayer('X')
+  }
+
+  const resetBoard = () => {
+    setBoard([])
     setWinner(undefined)
+    setIsGameStarted(false)
   }
 
   const onClickSquare = async (rowIndex: number, colIndex: number) => {
@@ -45,8 +54,14 @@ export const Main = () => {
   return (
     <div className='flex flex-col mt-10 items-center gap-10'>
       <div className='font-bold text-2xl'>Tic Tac Toe</div>
-      <Board board={board} onClickSquare={onClickSquare} />
-      {winner && <VictoryBanner winner={winner} onReset={resetBoard} />}
+      {isGameStarted ? (
+        <>
+          <Board board={board} onClickSquare={onClickSquare} />
+          {winner && <VictoryBanner winner={winner} onReset={resetBoard} />}
+        </>
+      ) : (
+        <BoardResizer startGame={startGame} boardSize={boardSize} setBoardSize={setBoardSize} />
+      )}
     </div>
   )
 }
