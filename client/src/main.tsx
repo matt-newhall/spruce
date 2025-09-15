@@ -12,7 +12,7 @@ export const Main = () => {
 
   const [player, setPlayer] = useState<XorO>('X')
 
-  const onClickCell = (rowIndex: number, colIndex: number) => {
+  const onClickSquare = (rowIndex: number, colIndex: number) => {
     if (board[rowIndex][colIndex] !== undefined) {
       return
     }
@@ -30,7 +30,7 @@ export const Main = () => {
   return (
     <div className='flex flex-col mt-10 items-center gap-10'>
       <div className='font-bold text-2xl'>Tic Tac Toe</div>
-      <Board board={board} onClickCell={onClickCell} />
+      <Board board={board} onClickSquare={onClickSquare} />
     </div>
   )
 }
