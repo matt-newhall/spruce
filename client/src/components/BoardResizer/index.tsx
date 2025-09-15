@@ -18,6 +18,7 @@ export const BoardResizer = ({ boardSize, setBoardSize, startGame }: Props) => {
           min={BOARD_SIZE_MIN}
           max={BOARD_SIZE_MAX}
           value={boardSize}
+          defaultValue={boardSize}
           onChange={(e) => setBoardSize(Number(e.target.value))}
           className="w-64 h-3 bg-gray-200 rounded-lg cursor-pointer slider"
         />
