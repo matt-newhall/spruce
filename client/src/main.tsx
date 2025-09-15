@@ -1,18 +1,24 @@
 import React, { useState } from 'react'
-import { XorO } from './types'
+import { Winner, XorO } from './types'
 import Board from './components/Board'
+import { isBoardFull, isWinningMove } from './utils/boardUtils'
 
 
 export const Main = () => {
-  const [board, setBoard] = useState<(XorO | undefined)[][]>([
-    [undefined, undefined, undefined],
-    [undefined, undefined, undefined],
-    [undefined, undefined, undefined]
-  ])
-
+  const [board, setBoard] = useState<(XorO | undefined)[][]>(Array(3).fill(Array(3).fill(undefined)))
   const [player, setPlayer] = useState<XorO>('X')
 
-  const onClickSquare = (rowIndex: number, colIndex: number) => {
+  const resetBoard = () => {
+    setBoard(Array(3).fill(Array(3).fill(undefined)))
+    setPlayer('X')
+  }
+
+  const displayWinnerAndEnd = (winner: Winner) => {
+    alert(`The winner is.. ${winner}!\n\nPress OK to restart.`);
+    resetBoard()
+  }
+
+  const onClickSquare = async (rowIndex: number, colIndex: number) => {
     if (board[rowIndex][colIndex] !== undefined) {
       return
     }
@@ -23,8 +29,19 @@ export const Main = () => {
     // and add the player's symbol
     updatedBoard[rowIndex][colIndex] = player
 
-    setBoard(updatedBoard)
-    setPlayer(player === 'X' ? 'O' : 'X')
+    await setBoard(updatedBoard)
+
+    const isWin = isWinningMove(updatedBoard, rowIndex, colIndex, player)
+    const allTilesFilled = isBoardFull(updatedBoard)
+
+    if (isWin) {
+      displayWinnerAndEnd(player)
+    } else if (allTilesFilled) {
+      displayWinnerAndEnd('Draw')
+    } else {
+      // no endgame condition met, switch player and continue
+      setPlayer(player === 'X' ? 'O' : 'X')
+    }
   }
 
   return (

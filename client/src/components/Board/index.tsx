@@ -1,9 +1,9 @@
 import React from 'react'
-import { Tile } from "../../types"
+import { Board } from "../../types"
 import Square from '../Square';
 
 type Props = {
-  board: Tile[][];
+  board: Board;
   onClickSquare: (rowIndex: number, colIndex: number) => void;
 }
 
