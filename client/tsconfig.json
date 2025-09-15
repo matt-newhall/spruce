@@ -6,5 +6,6 @@
     "moduleResolution": "Node",
     "esModuleInterop": true,
     "strictNullChecks": true,
-  }
+  },
+  "types": ["node", "jest", "@testing-library/jest-dom"],
 }
