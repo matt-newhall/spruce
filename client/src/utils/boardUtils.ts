@@ -19,10 +19,12 @@ export const isWinningMove = (board: Board, row: number, col: number, player: Xo
   if (board.every(r => r[col] === player)) return true
 
   // Optionally check diagonal wins
-  if (row === col) {
-    if (board.every((r, i) => r[i] === player)) return true
-  } else if (row === size - col - 1) {
-    if (board.every((r, i) => r[size - i - 1] === player)) return true
+  if (row === col && board.every((r, i) => r[i] === player)) {
+    return true
+  }
+
+  if (row === size - col - 1 && board.every((r, i) => r[size - i - 1] === player)) {
+    return true
   }
 
   return false
