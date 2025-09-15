@@ -16,14 +16,11 @@ export const Main = () => {
       return
     }
 
-    const updatedBoard = board.map((row, rowId) =>
-      row.map((cell, colId) => {
-        if (rowId === rowIndex && colId === colIndex) {
-          return player
-        }
-        return cell
-      })
-    )
+    // avoids iterating over the whole array - so clone the row array
+    const updatedBoard = [...board]
+    updatedBoard[rowIndex] = [...updatedBoard[rowIndex]]
+    // and add the player's symbol
+    updatedBoard[rowIndex][colIndex] = player
 
     setBoard(updatedBoard)
     setPlayer(player === 'X' ? 'O' : 'X')
