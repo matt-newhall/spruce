@@ -1,52 +1,63 @@
 import React, { useState } from 'react'
-import { Winner, XorO } from './types'
+import { GameState } from './types'
 import Board from './components/Board'
 import { isBoardFull, isWinningMove } from './utils/boardUtils'
 import { VictoryBanner } from './components/VictoryBanner'
-
+import { BoardResizer } from './components/BoardResizer'
 
 export const Main = () => {
-  const [board, setBoard] = useState<(XorO | undefined)[][]>(Array(3).fill(Array(3).fill(undefined)))
-  const [player, setPlayer] = useState<XorO>('X')
-  const [winner, setWinner] = useState<Winner>()
+  const [boardSize, setBoardSize] = useState(3)
+  const [gameState, setGameState] = useState<GameState | null>(null)
 
-  const resetBoard = () => {
-    setBoard(Array(3).fill(Array(3).fill(undefined)))
-    setPlayer('X')
-    setWinner(undefined)
+  const startGame = () => {
+    const inner = Array(boardSize).fill(undefined)
+    const board = Array(boardSize).fill(inner)
+    setGameState({
+      board,
+      player: 'X'
+    })
   }
 
-  const onClickSquare = async (rowIndex: number, colIndex: number) => {
-    if (board[rowIndex][colIndex] !== undefined) {
+  const resetBoard = () => {
+    setGameState(null)
+  }
+
+  const onClickSquare = (rowIndex: number, colIndex: number) => {
+    if (!gameState) return
+
+    if (gameState.board[rowIndex][colIndex] !== undefined) {
       return
     }
 
     // avoids iterating over the whole array - so clone the row array
-    const updatedBoard = [...board]
+    const updatedBoard = [...gameState.board]
     updatedBoard[rowIndex] = [...updatedBoard[rowIndex]]
     // and add the player's symbol
-    updatedBoard[rowIndex][colIndex] = player
+    updatedBoard[rowIndex][colIndex] = gameState.player
 
-    await setBoard(updatedBoard)
-
-    const isWin = isWinningMove(updatedBoard, rowIndex, colIndex, player)
+    const isWin = isWinningMove(updatedBoard, rowIndex, colIndex, gameState.player)
     const allTilesFilled = isBoardFull(updatedBoard)
 
-    if (isWin) {
-      setWinner(player)
-    } else if (allTilesFilled) {
-      setWinner('Draw')
-    } else {
-      // no endgame condition met, switch player and continue
-      setPlayer(player === 'X' ? 'O' : 'X')
-    }
+    const winner = isWin ? gameState.player : allTilesFilled ? 'Draw' : undefined
+
+    setGameState({
+      board: updatedBoard,
+      player: gameState.player === 'X' ? 'O' : 'X',
+      winner: winner
+    })
   }
 
   return (
     <div className='flex flex-col mt-10 items-center gap-10'>
       <div className='font-bold text-2xl'>Tic Tac Toe</div>
-      <Board board={board} onClickSquare={onClickSquare} />
-      {winner && <VictoryBanner winner={winner} onReset={resetBoard} />}
+      {gameState ? (
+        <>
+          <Board board={gameState.board} onClickSquare={onClickSquare} />
+          {gameState.winner && <VictoryBanner winner={gameState.winner} onReset={resetBoard} />}
+        </>
+      ) : (
+        <BoardResizer startGame={startGame} boardSize={boardSize} setBoardSize={setBoardSize} />
+      )}
     </div>
   )
 }
