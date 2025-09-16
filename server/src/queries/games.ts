@@ -16,8 +16,8 @@ export const createGame = `
 export const getStats = `
   SELECT
     COUNT(*)::int AS total_games,
-    COUNT(CASE WHEN winner_id = 1 THEN 1 END)::int AS player_x_wins,
-    COUNT(CASE WHEN winner_id = 2 THEN 1 END)::int AS player_o_wins,
+    COUNT(CASE WHEN winner_id = player_x_id THEN 1 END)::int AS player_x_wins,
+    COUNT(CASE WHEN winner_id = player_o_id THEN 1 END)::int AS player_o_wins,
     COUNT(CASE WHEN winner_id IS NULL THEN 1 END)::int AS draws
   FROM games;
 `;
