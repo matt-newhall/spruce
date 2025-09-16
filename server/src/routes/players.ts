@@ -1,13 +1,13 @@
 import { Router } from "express";
 
-import { seedPlayers } from "../seed";
+import { getAllPlayers } from "../services/players";
 
 const router = Router();
 
-router.post("/seed", async (req, res, next) => {
+router.get("/", async (_, res, next) => {
   try {
-    await seedPlayers();
-    res.json({ message: "Players seeded successfully" });
+    const players = await getAllPlayers();
+    res.json(players);
   } catch (err) {
     next(err);
   }

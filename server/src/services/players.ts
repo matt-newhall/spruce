@@ -1,5 +1,5 @@
-import { pool } from "./db";
-import { insertPlayer } from "./queries/players";
+import { pool } from "../db";
+import { getAllPlayersQuery, insertPlayer } from "../queries/players";
 
 /**
  * Seeds the database with two default players
@@ -26,3 +26,13 @@ export async function seedPlayers() {
     throw err;
   }
 }
+
+/**
+ * Fetches all players in the players table
+ *
+ * @returns Array of players
+ */
+export const getAllPlayers = async () => {
+  const result = await pool.query(getAllPlayersQuery);
+  return result.rows;
+};

@@ -9,5 +9,8 @@ CREATE TABLE IF NOT EXISTS players (
 export const insertPlayer = (name: string) => `
 INSERT INTO players (name)
 VALUES ('${name}')
-ON CONFLICT (name) DO NOTHING;
+`;
+
+export const getAllPlayersQuery = `
+SELECT id, name FROM players;
 `;

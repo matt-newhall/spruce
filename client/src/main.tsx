@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { GameState } from './types'
 import Board from './components/Board'
 import { isBoardFull, isWinningMove } from './utils/boardUtils'
@@ -6,6 +6,9 @@ import { VictoryBanner } from './components/VictoryBanner'
 import { BoardResizer } from './components/BoardResizer'
 
 export const Main = () => {
+  const [players, setPlayers] = useState<{ id: number; name: string }[]>([])
+  const [loadingPlayers, setLoadingPlayers] = useState(true)
+
   const [boardSize, setBoardSize] = useState(3)
   const [gameState, setGameState] = useState<GameState | null>(null)
 
@@ -46,6 +49,21 @@ export const Main = () => {
       winner: winner
     })
   }
+
+  useEffect(() => {
+    fetch("http://localhost:4000/players")
+      .then(res => res.json())
+      .then(data => {
+        setPlayers(data)
+        setLoadingPlayers(false)
+      })
+      .catch(err => {
+        console.error(err)
+        setLoadingPlayers(false)
+      })
+  }, [])
+
+  if (loadingPlayers) return <div>Loading players...</div>
 
   return (
     <div className='flex flex-col mt-10 items-center gap-10'>
