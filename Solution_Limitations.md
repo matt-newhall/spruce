@@ -8,3 +8,4 @@ I am quite happy with the solution given, but here's what I would improve on if 
 - Layout isn't great - mobile will be particularly bad at larger screen sizes. Also, all of the components are 'clumped' a bit - only really an issue for the score display which definitely could look nicer.
 - I'd like to share types between the FE and BE. I think this particularly shows in `useStats.ts` where the `data` object is untyped.
 - `onClickSquare` is in dire need of a refactor, it's doing quite a bit more than a simple `onClick` and is also handling a lot of game end checking which direly needs to be in a different function.
+- Test runs wipe database data entirely - doing this again, it would be better to do test runs in a separate Docker container to avoid deleting live data, but I just didn't have time for this.
