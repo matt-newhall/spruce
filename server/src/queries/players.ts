@@ -5,3 +5,9 @@ CREATE TABLE IF NOT EXISTS players (
   created_at TIMESTAMP DEFAULT NOW()
 );
 `;
+
+export const insertPlayer = (name: string) => `
+INSERT INTO players (name)
+VALUES ('${name}')
+ON CONFLICT (name) DO NOTHING;
+`;
