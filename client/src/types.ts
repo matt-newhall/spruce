@@ -12,6 +12,16 @@ export type GameState = {
   winner?: Winner;
 }
 
+export type Player =  {
+  id: number;
+  name: string;
+}
+
+export type PlayersState = {
+  loading: boolean;
+  data: Player[]
+}
+
 export type Stats = {
   totalGames: number;
   playerXWins: number;
