@@ -1,10 +1,10 @@
 const express = require('express');
 const cors = require('cors');
-const { Pool } = require('pg');
 
 import config from '../config/config';
 import { initDb } from './db';
 import errorHandler from './middleware/errorHandler';
+import gamesRouter from './routes/games';
 import playersRouter from './routes/players';
 import { seedPlayers } from './services/players';
 
@@ -15,6 +15,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/players", playersRouter);
+app.use("/games", gamesRouter);
 app.use(errorHandler);
 
 
