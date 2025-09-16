@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from 'react'
-import { GameState } from './types'
+import { GameState, Stats } from './types'
 import Board from './components/Board'
 import { isBoardFull, isWinningMove } from './utils/boardUtils'
 import { VictoryBanner } from './components/VictoryBanner'
 import { BoardResizer } from './components/BoardResizer'
+import { getPlayerId } from './utils/serverUtils'
+import { StatsDisplay } from './components/StatsDisplay'
 
 export const Main = () => {
   const [players, setPlayers] = useState<{ id: number; name: string }[]>([])
   const [loadingPlayers, setLoadingPlayers] = useState(true)
+
+  const [stats, setStats] = useState<Stats | null>(null)
 
   const [boardSize, setBoardSize] = useState(3)
   const [gameState, setGameState] = useState<GameState | null>(null)
@@ -23,6 +27,20 @@ export const Main = () => {
 
   const resetBoard = () => {
     setGameState(null)
+  }
+
+  const fetchStats = () => {
+    fetch("http://localhost:4000/games/stats")
+      .then((res) => res.json())
+      .then((data) => {
+        setStats({
+          totalGames: data.total_games,
+          playerXWins: data.player_x_wins,
+          playerOWins: data.player_o_wins,
+          draws: data.draws,
+        })
+      })
+      .catch(console.error);
   }
 
   const onClickSquare = (rowIndex: number, colIndex: number) => {
@@ -42,15 +60,37 @@ export const Main = () => {
     const allTilesFilled = isBoardFull(updatedBoard)
 
     const winner = isWin ? gameState.player : allTilesFilled ? 'Draw' : undefined
+    const winnerId = isWin
+      ? getPlayerId(players, gameState.player)
+      : undefined
 
     setGameState({
       board: updatedBoard,
       player: gameState.player === 'X' ? 'O' : 'X',
       winner: winner
     })
+
+    if (winnerId !== undefined || allTilesFilled) {
+      const body = JSON.stringify({
+        playerXId: getPlayerId(players, 'X'),
+        playerOId: getPlayerId(players, 'O'),
+        winnerId
+      });
+
+      fetch("http://localhost:4000/games", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body,
+      })
+      .then(res => res.json())
+      .then(data => console.log("Game saved:", data))
+      .then(fetchStats)
+      .catch(err => console.error("Error saving game:", err));
+    }
   }
 
   useEffect(() => {
+    fetchStats()
     fetch("http://localhost:4000/players")
       .then(res => res.json())
       .then(data => {
@@ -76,6 +116,7 @@ export const Main = () => {
       ) : (
         <BoardResizer startGame={startGame} boardSize={boardSize} setBoardSize={setBoardSize} />
       )}
+      <StatsDisplay stats={stats} />
     </div>
   )
 }
