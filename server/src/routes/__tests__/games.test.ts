@@ -5,7 +5,7 @@ import { pool } from "../../db";
 import { seedPlayers } from "../../services/players";
 
 describe("Games API", () => {
-  beforeAll(async () => {
+  beforeEach(async () => {
     await pool.query("DELETE FROM games;");
     await pool.query("DELETE FROM players;");
     await seedPlayers()
